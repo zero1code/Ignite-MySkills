@@ -1,101 +1,108 @@
-import React, { useState } from 'react';
-import { 
-    View,
-    Text,
-    StyleSheet,
-    TextInput,
-    Platform,
-    TouchableOpacity
-  } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+	View,
+	Text,
+	StyleSheet,
+	TextInput,
+	Platform,
+	FlatList,
+} from 'react-native';
 
-export function Home(){
-  const [newSkill, setNewSkill] = useState('');
-  const [mySkills, setMySkills] = useState([]);
+import { Button } from '../components/Button';
+import { SkillCard } from '../components/SkillCard';
 
-  function handleAddNewSkill() {
-    setMySkills(oldState => [...oldState, newSkill]);
-  }
+export function Home() {
+	const [newSkill, setNewSkill] = useState('');
+	const [mySkills, setMySkills] = useState([]);
+	const [gretting, setGretting] = useState('');
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome,
-       Airton
+	function handleAddNewSkill() {
+		setMySkills(oldState => [...oldState, newSkill]);
+	}
+
+	useEffect(() => {
+		const currentHour = new Date().getHours();
+
+		if (currentHour < 12) {
+			setGretting('Good morning')
+		}
+		else if (currentHour >= 12 && currentHour < 18) {
+			setGretting('Good afternoon')
+		}
+		else {
+			setGretting('Good night')
+		}
+
+	}, []);
+
+	return (
+		<View style={styles.container}>
+
+			<Text style={styles.title}>Welcome,
+			Airton
       </Text>
 
-      <TextInput style={styles.input}
-        placeholder="New Skill"
-        placeholderTextColor="#555"
-        onChangeText={setNewSkill}
-      />
+			<Text style={styles.greetings}>
+				{gretting}
+			</Text>
 
-      <TouchableOpacity 
-        style={styles.button}
-        activeOpacity={.7}
-        onPress={handleAddNewSkill}
-      >
-        <Text style={styles.buttonText}>Add</Text>
-      </TouchableOpacity>
-      
-      <Text style={[styles.title, { marginVertical: 50 }]}>
-        My Skills
+			<TextInput style={styles.input}
+				placeholder="New Skill"
+				placeholderTextColor="#555"
+				onChangeText={setNewSkill}
+			/>
+
+			<Button onPress={handleAddNewSkill} />
+
+			<Text style={[styles.title, { marginVertical: 50 }]}>
+				My Skills
       </Text>
 
-      {
-        mySkills.map(skill => (
-          <TouchableOpacity key={skill} style={styles.buttonSkill}>
-            <Text style={styles.textSkill}>
-              {skill}
-            </Text>
-          </TouchableOpacity>
-        ))
-      }
-    </View>
-  )
+			<FlatList
+				data={mySkills}
+				keyExtractor={item => item}
+				renderItem={({ item }) => (
+					<SkillCard skill={item} />
+				)}
+			/>
+		</View>
+	)
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, 
-    backgroundColor: '#121015',
-    paddingHorizontal: 20,
-    paddingVertical: 70,
-    paddingHorizontal: 30,
-  },
-  title: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold'
-  },
-  input: {
-    backgroundColor: '#1f1e25',
-    color: '#fff',
-    fontSize: 18,
-    padding: Platform.OS === 'ios' ? 15 : 10,
-    marginTop: 30,
-    borderRadius: 7
-  },
-  button: {
-    backgroundColor: '#a370f7',
-    padding: 15,
-    borderRadius: 7,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: 'bold'
-  },
-  buttonSkill: {
-    backgroundColor: '#1f1e25',
-    padding: 15,
-    borderRadius: 50,
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  textSkill: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: 'bold',
-  }
+	container: {
+		flex: 1,
+		backgroundColor: '#121015',
+		paddingHorizontal: 20,
+		paddingVertical: 70,
+		paddingHorizontal: 30,
+	},
+	title: {
+		color: '#fff',
+		fontSize: 24,
+		fontWeight: 'bold'
+	},
+	input: {
+		backgroundColor: '#1f1e25',
+		color: '#fff',
+		fontSize: 18,
+		padding: Platform.OS === 'ios' ? 15 : 10,
+		marginTop: 30,
+		borderRadius: 7
+	},
+	buttonSkill: {
+		backgroundColor: '#1f1e25',
+		padding: 15,
+		borderRadius: 50,
+		alignItems: 'center',
+		marginVertical: 10,
+	},
+	textSkill: {
+		color: '#fff',
+		fontSize: 22,
+		fontWeight: 'bold',
+	},
+	greetings: {
+		color: '#fff',
+	}
 });
